@@ -25,10 +25,10 @@ jobs:
           wget -O app.apk "${{ github.event.inputs.apk_url }}"
 
       - name: Create Release & Upload APK
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.event.inputs.tag_name }}
-          name: ${{ github.event.inputs.release_name }}
-          files: app.apk
+        run: |
+          gh release create "${{ github.event.inputs.tag_name }}" \
+            app.apk \
+            --title "${{ github.event.inputs.release_name }}" \
+            --repo "${{ github.repository }}"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
