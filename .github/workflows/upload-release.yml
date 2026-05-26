@@ -19,10 +19,21 @@ on:
 jobs:
   upload:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Download APK
         run: |
-          wget -O app.apk "${{ github.event.inputs.apk_url }}"
+          wget --no-check-certificate -O app.apk "${{ github.event.inputs.apk_url }}"
+          ls -lh app.apk
+
+      - name: Delete old release if exists
+        run: |
+          gh release delete "${{ github.event.inputs.tag_name }}" --yes --repo "${{ github.repository }}" || true
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Release & Upload APK
         run: |
